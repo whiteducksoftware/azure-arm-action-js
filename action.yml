@@ -1,10 +1,12 @@
 name: "Azure Resource Group Deployment"
 description: "todo..."
 inputs:
-  who-to-greet: # id of input
-    description: "Who to greet"
+  ressourceGroup:
+    description: "todo..rg"
     required: true
-    default: "World"
+  templateFile:
+    description: "todo..template"
+    required: true
 outputs:
   time: # id of output
     description: "The time we greeted you"
