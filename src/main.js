@@ -16,13 +16,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core = __importStar(require("@actions/core"));
 const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         let azPath = yield io.which("az", true);
-        let ressourceGroup = 'github-action-arm-rg';
-        let templateFile = 'examples/azuredeploy.json';
+        const ressourceGroup = core.getInput('ressourceGroup');
+        const templateFile = core.getInput('templateFile');
         /*
             az group deployment create --resource-group
                                     [--aux-subs]

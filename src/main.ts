@@ -3,14 +3,12 @@ import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 
 
-
-
 async function main() {
     let azPath = await io.which("az", true);
 
 
-    let ressourceGroup = 'github-action-arm-rg'
-    let templateFile = 'examples/azuredeploy.json'
+    const ressourceGroup = core.getInput('ressourceGroup')
+    const templateFile = core.getInput('templateFile')
 
     /*
         az group deployment create --resource-group
