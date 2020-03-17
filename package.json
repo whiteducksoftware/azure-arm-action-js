@@ -1,0 +1,27 @@
+{
+  "name": "azure-arm-action-js",
+  "version": "1.0.0",
+  "description": "My Packatge",
+  "main": "main.js",
+  "scripts": {
+    "test": "nocommd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "no"
+  },
+  "keywords": [
+    "nokeywo"
+  ],
+  "author": "martin.brandl@whiteduck.de",
+  "license": "ISC",
+  "devDependencies": {
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.3",
+    "@actions/exec": "^1.0.3",
+    "@actions/io": "^1.0.2"
+  }
+}
