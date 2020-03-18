@@ -16,18 +16,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core = __importStar(require("@actions/core"));
 const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
-class Greeter {
-    getInput(inp) {
-        return inp;
-    }
-}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         // determine az path
         const azPath = yield io.which("az", true);
-        let core = new Greeter();
         // retrieve action variables
         const resourceGroupName = core.getInput('resourceGroupName');
         const templateLocation = core.getInput('templateLocation');
