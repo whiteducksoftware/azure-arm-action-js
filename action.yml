@@ -1,15 +1,22 @@
 name: "Azure Resource Group Deployment"
-description: "todo..."
+description: "Use this GitHub Action task deploy an Azure Resource Manager (ARM) template"
 inputs:
-  ressourceGroup:
-    description: "todo..rg"
+  resourceGroupName:
+    description: "Provide the name of a resource group."
     required: true
-  templateFile:
-    description: "todo..template"
+  templateLocation:
+    description: "Specify the path to the Azure Resource Manager template."
     required: true
-outputs:
-  time: # id of output
-    description: "The time we greeted you"
+  deploymentMode:
+    description: "Incremental (only add resources to resource group) or Complete (remove extra resources from resource group)."
+    required: false
+    default: Incremental
+  deploymentName:
+    description: "Specifies the name of the resource group deployment to create."
+    required: false
+  parameters:
+    description: "Supply deployment parameter values."
+    required: false
 runs:
   using: "node12"
   main: "src/main.js"

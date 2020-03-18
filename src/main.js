@@ -16,29 +16,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core = __importStar(require("@actions/core"));
 const exec = __importStar(require("@actions/exec"));
 const io = __importStar(require("@actions/io"));
+class Greeter {
+    getInput(inp) {
+        return inp;
+    }
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        let azPath = yield io.which("az", true);
-        const ressourceGroup = core.getInput('ressourceGroup');
-        const templateFile = core.getInput('templateFile');
-        /*
-            az group deployment create --resource-group
-                                    [--aux-subs]
-                                    [--aux-tenants]
-                                    [--handle-extended-json-format]
-                                    [--mode {Complete, Incremental}]
-                                    [--name]
-                                    [--no-wait]
-                                    [--parameters]
-                                    [--rollback-on-error]
-                                    [--subscription]
-                                    [--template-file]
-                                    [--template-uri]
-                */
-        yield executeAzureCliCommand(azPath, `group deployment create --resource-group ${ressourceGroup} --template-file ${templateFile}`);
+        // determine az path
+        const azPath = yield io.which("az", true);
+        let core = new Greeter();
+        // retrieve action variables
+        const resourceGroupName = core.getInput('resourceGroupName');
+        const templateLocation = core.getInput('templateLocation');
+        const deploymentMode = core.getInput('deploymentMode');
+        const deploymentName = core.getInput('deploymentName');
+        const parameters = core.getInput('parameters');
+        // create the parameter list
+        let azDeployParameters = [
+            resourceGroupName ? `--resource-group ${resourceGroupName}` : undefined,
+            templateLocation ? `--template-file ${templateLocation}` : undefined,
+            deploymentMode ? `--mode ${deploymentMode}` : undefined,
+            deploymentName ? `--name ${deploymentName}` : undefined,
+            parameters ? `--parameters ${parameters}` : undefined
+        ].filter(Boolean).join(' ');
+        yield executeAzureCliCommand(azPath, `group deployment create ${azDeployParameters}`);
     });
 }
 function executeAzureCliCommand(cliPath, command) {
