@@ -2,18 +2,9 @@ import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
 
-class Greeter {
-    getInput(inp: string) {
-        return inp;
-    }
-}
-
 async function main() {
-
     // determine az path
     const azPath = await io.which("az", true);
-
-    let core = new Greeter();
 
     // retrieve action variables
     const resourceGroupName = core.getInput('resourceGroupName')
