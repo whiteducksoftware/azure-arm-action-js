@@ -1,6 +1,9 @@
 # GitHub Action for Azure Resource Manager (ARM) deployment
 
-With the Azure Resource Manager (ARM) Action, you can deploy ARM templates inside your GitHub workflow.
+A GitHub Action to deploy ARM templates.
+
+![build and publish](https://github.com/whiteducksoftware/azure-arm-action-js/workflows/build-release/badge.svg)
+
 
 ## Dependencies
 
