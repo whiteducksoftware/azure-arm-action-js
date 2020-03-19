@@ -1,7 +1,7 @@
 {
   "name": "azure-arm-action-js",
   "version": "1.0.0",
-  "description": "My Packatge",
+  "description": "GitHub Action task to deploy an Azure Resource Manager (ARM) template",
   "main": "main.js",
   "scripts": {
     "test": "nocommd"
