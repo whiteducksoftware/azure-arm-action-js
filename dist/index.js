@@ -1574,7 +1574,7 @@ function main() {
                 deploymentName ? `--name ${deploymentName}` : undefined,
                 parameters ? `--parameters ${parameters}` : undefined
             ].filter(Boolean).join(' ');
-            yield executeAzureCliCommand(azPath, `group deployment create ${azDeployParameters}`);
+            yield executeAzureCliCommand(azPath, `deployment group create ${azDeployParameters}`);
         }
         catch (error) {
             core.setFailed(error.message);
