@@ -16,6 +16,7 @@
   "author": "martin.brandl@whiteduck.de",
   "license": "ISC",
   "devDependencies": {
+    "@zeit/ncc": "^0.21.1",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"
   },
