@@ -24,7 +24,7 @@ async function main() {
             parameters ? `--parameters ${parameters}` : undefined
         ].filter(Boolean).join(' ');
 
-        await executeAzureCliCommand(azPath, `group deployment create ${azDeployParameters}`)
+        await executeAzureCliCommand(azPath, `deployment group create ${azDeployParameters}`)
     } catch (error) {
         core.setFailed(error.message);
     }
