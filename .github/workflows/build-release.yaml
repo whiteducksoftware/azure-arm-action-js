@@ -16,8 +16,8 @@ jobs:
 
       - name: build-release
         run: |
-          tsc
           npm install --production
+          tsc
           zip -r release.zip .
 
       - name: create-release
