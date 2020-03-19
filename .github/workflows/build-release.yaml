@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '12.x'
 
-      - run: npm i -D @zeit/ncc
+      - run: sudo npm i -g @zeit/ncc
       - run: npm install
         
       
