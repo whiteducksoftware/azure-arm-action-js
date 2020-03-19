@@ -9,47 +9,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: checkout-code
+      - name: Checkout Code
         uses: actions/checkout@master
-
-      - name: build-release
+      
+      - name: Build Action
         run: |
-          
-        
           npm i -g @zeit/ncc
           npm install --production
           tsc
           ncc build src/main.js
           
-          git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+      - name: Commit Files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Add changes" -a
 
-          git add .
-
-          git commit -m "Update native model"
-          git push github release/v2
-
-      - name: create-release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: upload-release-artifacts
-        id: upload-release-artifacts
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release.zip
-          asset_name: release.zip
-          asset_content_type: application/zip
+    
           
 
