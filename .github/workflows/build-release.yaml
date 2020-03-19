@@ -29,7 +29,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-          git add dist/main.js
+          git add dist/index.js
           git commit -m "Add changes"
 
       - name: Push changes
