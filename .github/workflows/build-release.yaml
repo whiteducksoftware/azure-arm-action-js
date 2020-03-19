@@ -14,14 +14,14 @@ jobs:
 
       - name: build-release
         run: |
-          git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          
         
           npm i -g @zeit/ncc
           npm install --production
           tsc
           ncc build src/main.js
           
-         
+          git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
 
           git add .
 
