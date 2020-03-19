@@ -1,7 +1,5 @@
 on:
-  push:
-    tags:
-      - 'v*'
+  [push]
 
 name: build-release
 
@@ -16,9 +14,19 @@ jobs:
 
       - name: build-release
         run: |
+          git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+        
+          npm i -g @zeit/ncc
           npm install --production
           tsc
-          zip -r release.zip .
+          ncc build src/main.js
+          
+         
+
+          git add .
+
+          git commit -m "Update native model"
+          git push github release/v2
 
       - name: create-release
         id: create_release
@@ -43,4 +51,5 @@ jobs:
           asset_path: ./release.zip
           asset_name: release.zip
           asset_content_type: application/zip
+          
 
