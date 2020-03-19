@@ -11,10 +11,17 @@ jobs:
 
       - name: Checkout Code
         uses: actions/checkout@master
+
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - run: npm install
       
       - name: Build Action
         run: |
-          npm i -g @zeit/ncc
+          npm i -D @zeit/ncc
           npm install --production
           tsc
           ncc build src/main.js
