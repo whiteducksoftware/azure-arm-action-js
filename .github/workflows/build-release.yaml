@@ -1,0 +1,46 @@
+on:
+  push:
+    tags:
+      - 'v*'
+
+name: build-release
+
+jobs:
+  build:
+    name: build-release
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout-code
+        uses: actions/checkout@master
+
+      - name: build-release
+        run: |
+          tsc
+          npm install --production
+          zip -r release.zip .
+
+      - name: create-release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: upload-release-artifacts
+        id: upload-release-artifacts
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release.zip
+          asset_name: release.zip
+          asset_content_type: application/zip
+
