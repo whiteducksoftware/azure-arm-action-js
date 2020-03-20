@@ -39,5 +39,4 @@ async function executeAzureCliCommand(cliPath: string, command: string) {
         throw new Error(error);
     }
 }
-
 main();
