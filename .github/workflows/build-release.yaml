@@ -32,6 +32,7 @@ jobs:
           ncc build src/main.js
 
       - name: Commit Files
+        continue-on-error: true # commit will fail if the code wasn't changed. Prevent the build to fail in this case.
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
