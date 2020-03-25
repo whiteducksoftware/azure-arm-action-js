@@ -17,6 +17,9 @@ inputs:
   parameters:
     description: "Supply deployment parameter values."
     required: false
+branding:
+  color: orange
+  icon: package
 runs:
   using: "node12"
   main: "dist/index.js"
