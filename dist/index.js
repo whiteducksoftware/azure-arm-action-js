@@ -1555,6 +1555,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(827));
 const exec = __importStar(__webpack_require__(120));
 const io = __importStar(__webpack_require__(51));
+// main
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
