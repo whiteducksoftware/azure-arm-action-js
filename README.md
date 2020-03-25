@@ -12,25 +12,15 @@ A GitHub Action to deploy ARM templates.
 
 ## Inputs
 
-### `resourceGroupName`
+* `resourceGroupName` **Required** Provide the name of a resource group.
 
-**Required** Provide the name of a resource group.
+* `templateLocation` **Required** Specify the path to the Azure Resource Manager template.
 
-### `templateLocation`
-
-**Required** Specify the path to the Azure Resource Manager template.
-
-### `deploymentMode`
-
-Incremental (only add resources to resource group) or Complete (remove extra resources from resource group). Default: `Incremental`.
+* `deploymentMode` Incremental (only add resources to resource group) or Complete (remove extra resources from resource group). Default: `Incremental`.
   
-### `deploymentName`
+* `deploymentName` Specifies the name of the resource group deployment to create.
 
-Specifies the name of the resource group deployment to create.
-
-### `parameters`
-
-description: "Supply deployment parameter values."
+* `parameters` description: "Supply deployment parameter values."
 
 ## Usage
 
