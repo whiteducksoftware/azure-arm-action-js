@@ -20,7 +20,7 @@ A GitHub Action to deploy ARM templates.
   
 * `deploymentName` Specifies the name of the resource group deployment to create.
 
-* `parameters` description: "Supply deployment parameter values."
+* `parameters` Supply deployment parameter values or local as well as remote value files.
 
 ## Usage
 
