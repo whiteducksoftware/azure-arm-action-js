@@ -4,6 +4,7 @@ A GitHub Action to deploy ARM templates.
 
 ![build and publish](https://github.com/whiteducksoftware/azure-arm-action-js/workflows/build-release/badge.svg)
 
+![white duck logo](img/wd-githubaction-arm.png?raw=true)
 
 ## Dependencies
 
