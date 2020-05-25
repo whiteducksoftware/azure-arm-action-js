@@ -1570,10 +1570,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.runTests = exports.main = void 0;
 const core = __importStar(__webpack_require__(827));
 const exec = __importStar(__webpack_require__(120));
 const io = __importStar(__webpack_require__(51));
-// main
+const assert = __importStar(__webpack_require__(357));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -1606,23 +1607,50 @@ function main() {
                 }
             };
             // execute the deployment
-            yield exec.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
+            let status = yield exec.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
+            if (status != 0) {
+                return { exitCode: status, outputs: {} };
+            }
             // parse the result and save the outputs
             var result = JSON.parse(commandOutput);
             var object = result.properties.outputs;
             for (const key in object) {
                 if (object.hasOwnProperty(key)) {
-                    const element = object[key];
-                    core.setOutput(key, element.value);
+                    core.setOutput(key, object[key].value);
                 }
             }
+            return {
+                exitCode: 0,
+                outputs: object
+            };
         }
         catch (error) {
             core.setFailed(error.message);
+            return { exitCode: 1, outputs: {} };
         }
     });
 }
-main();
+exports.main = main;
+// Unit Tests
+function runTests() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let result = yield main();
+        assert.equal(result.exitCode, 0, `Expected exit code 0 but got ${result.exitCode}`);
+        assert.equal(Object.keys(result.outputs).length, 2, `Expected output count of 2 but got ${Object.keys(result.outputs).length}`);
+        assert.equal(result.outputs["containerName"].value, "github-action", `Got invalid value for location key, expected github-action but got ${result.outputs["containerName"].value}`);
+        assert.equal(result.outputs["location"].value, "westeurope", `Got invalid value for location key, expected westeurope but got ${result.outputs["location"].value}`);
+    });
+}
+exports.runTests = runTests;
+if (process.env.RUN_TESTS != undefined) {
+    runTests().catch(e => {
+        console.error(e);
+        process.exit(1);
+    });
+}
+else {
+    main();
+}
 
 
 /***/ })
