@@ -80,5 +80,7 @@ if (process.env.RUN_TESTS != undefined) {
         process.exit(1)
     })
 } else {
-    main()
+    main().then(result => {
+        process.exit(result.exitCode)
+    })
 }
