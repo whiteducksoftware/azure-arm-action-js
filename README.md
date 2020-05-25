@@ -23,6 +23,9 @@ A GitHub Action to deploy ARM templates.
 
 * `parameters` Supply deployment parameter values or local as well as remote value files.
 
+## Outputs
+Every template output will be exported as output. For example the output is called `containerName` then it will be available with `${{ steps.STEP.outputs.containerName }}`    
+
 ## Usage
 
 ```yml

@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
+import { ExecOptions } from '@actions/exec/lib/interfaces';
 
 // main
 async function main() {
@@ -17,7 +18,7 @@ async function main() {
         const parameters = core.getInput('parameters')
 
         // create the parameter list
-        let azDeployParameters = [
+        const azDeployParameters = [
             resourceGroupName ? `--resource-group ${resourceGroupName}` : undefined,
             templateLocation ? `--template-file ${templateLocation}` : undefined,
             deploymentMode ? `--mode ${deploymentMode}` : undefined,
@@ -25,19 +26,34 @@ async function main() {
             parameters ? `--parameters ${parameters}` : undefined
         ].filter(Boolean).join(' ');
 
-        await executeAzureCliCommand(azPath, `deployment group create ${azDeployParameters}`)
+        // configure exec to write the json output to a buffer
+        let commandOutput = '';
+        const options: ExecOptions = {
+            listeners: {
+                stdout: (data: Buffer) => {
+                    let string = data.toString();
+                    if (!string.startsWith("[command]"))
+                        commandOutput += string;
+                    console.log(string);
+                },   
+            }
+        }
+
+        // execute the deployment
+        await exec.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
+
+        // parse the result and save the outputs
+        var result = JSON.parse(commandOutput) as { properties: { outputs: { [index: string]: object } } }
+        var object = result.properties.outputs
+        for (const key in object) {
+            if (object.hasOwnProperty(key)) {
+                const element = object[key] as { value: string }
+                core.setOutput(key, element.value)
+            }
+        }
     } catch (error) {
         core.setFailed(error.message);
     }
-
 }
 
-async function executeAzureCliCommand(cliPath: string, command: string) {
-    try {
-        await exec.exec(`"${cliPath}" ${command}`, [], {});
-    }
-    catch (error) {
-        throw new Error(error);
-    }
-}
 main();
