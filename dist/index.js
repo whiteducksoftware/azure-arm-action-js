@@ -1649,7 +1649,9 @@ if (process.env.RUN_TESTS != undefined) {
     });
 }
 else {
-    main();
+    main().then(result => {
+        process.exit(result.exitCode);
+    });
 }
 
 
