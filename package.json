@@ -24,6 +24,7 @@
     "@actions/core": "^1.2.3",
     "@actions/exec": "^1.0.3",
     "@actions/io": "^1.0.2",
+    "@types/assert": "^1.4.7",
     "@types/node": "^13.9.1"
   }
 }

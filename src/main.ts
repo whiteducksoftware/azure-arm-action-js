@@ -1,11 +1,12 @@
 import * as core from '@actions/core';
 import * as exec from '@actions/exec';
 import * as io from '@actions/io';
+import * as assert from 'assert';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
 
-// main
-async function main() {
-
+// Action Main code
+type outputs = { [index: string]: { value: string } }
+export async function main(): Promise<{ exitCode: number, outputs: outputs }> {
     try {
         // determine az path
         const azPath = await io.which("az", true);
@@ -40,20 +41,44 @@ async function main() {
         }
 
         // execute the deployment
-        await exec.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
+        let status = await exec.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
+        if (status != 0) {
+            return { exitCode: status, outputs: {} }
+        }
 
         // parse the result and save the outputs
-        var result = JSON.parse(commandOutput) as { properties: { outputs: { [index: string]: object } } }
+        var result = JSON.parse(commandOutput) as { properties: { outputs: outputs } }
         var object = result.properties.outputs
         for (const key in object) {
             if (object.hasOwnProperty(key)) {
-                const element = object[key] as { value: string }
-                core.setOutput(key, element.value)
+                core.setOutput(key, object[key].value)
             }
+        }
+
+        return {
+            exitCode: 0,
+            outputs: object
         }
     } catch (error) {
         core.setFailed(error.message);
+        return { exitCode: 1, outputs: {} }
     }
 }
 
-main();
+// Unit Tests
+export async function runTests() {
+    let result = await main()
+    assert.equal(result.exitCode, 0, `Expected exit code 0 but got ${result.exitCode}`)
+    assert.equal(Object.keys(result.outputs).length, 2, `Expected output count of 2 but got ${Object.keys(result.outputs).length}`)
+    assert.equal(result.outputs["containerName"].value, "github-action", `Got invalid value for location key, expected github-action but got ${result.outputs["containerName"].value}`)
+    assert.equal(result.outputs["location"].value, "westeurope", `Got invalid value for location key, expected westeurope but got ${result.outputs["location"].value}`)
+}
+
+if (process.env.RUN_TESTS != undefined) {
+    runTests().catch(e => {
+        console.error(e)
+        process.exit(1)
+    })
+} else {
+    main()
+}
