@@ -21,15 +21,17 @@ A GitHub Action to deploy ARM templates.
   
 * `deploymentName` Specifies the name of the resource group deployment to create.
 
-* `parameters` Supply deployment parameter values or local as well as remote value files.
+* `parameters` Supply deployment parameter values or local as well as remote value files.   
+  (See also [examples/Advanced.md](examples/Advanced.md))
 
 ## Outputs
 Every template output will be exported as output. For example the output is called `containerName` then it will be available with `${{ steps.STEP.outputs.containerName }}`    
+For more Information see [examples/Advanced.md](examples/Advanced.md).    
 
 ## Usage
 
 ```yml
-- uses: whiteducksoftware/azure-arm-action-js@v1
+- uses: whiteducksoftware/azure-arm-action-js@v3
   with:
     resourceGroupName: <YourResourceGroup>
     templateLocation: <path/to/azuredeploy.json>
@@ -42,7 +44,6 @@ on: [push]
 name: AzureLoginSample
 
 jobs:
-
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
@@ -50,9 +51,10 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - uses: whiteducksoftware/azure-arm-action-js@v1
+    - uses: whiteducksoftware/azure-arm-action-js@v3
       with:
         resourceGroupName: github-action-arm-rg
         templateLocation: ./azuredeploy.json
         parameters: storageAccountType=Standard_LRS
 ```
+For more advanced workflows see [examples/Advanced.md](examples/Advanced.md).
