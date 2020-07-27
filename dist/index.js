@@ -788,7 +788,7 @@ function ParseOutputs(commandOutput) {
             core.setOutput(key, object[key].value);
         }
     }
-    return true;
+    return object;
 }
 exports.ParseOutputs = ParseOutputs;
 

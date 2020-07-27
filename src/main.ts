@@ -1,30 +1,31 @@
-import * as core from '@actions/core';
-import * as io from '@actions/io';
+import { which } from '@actions/io';
 import { DeployResourceGroupScope } from './deploy/scope_resourcegroup';
 import { exec } from '@actions/exec';
 import { DeployManagementGroupScope } from './deploy/scope_managementgroup';
 import { DeploySubscriptionScope } from './deploy/scope_subscription';
+import { Outputs } from './utils/utils';
+import { getInput } from '@actions/core';
 
 // Action Main code
-export async function main(): Promise<number> {
+export async function main(): Promise<Outputs> {
     // determine az path
-    const azPath = await io.which("az", true);
+    const azPath = await which("az", true);
 
     // retrieve action variables
-    const scope = core.getInput('scope')
-    const subscriptionId = core.getInput('subscriptionId')
-    const location = core.getInput('location')
-    const resourceGroupName = core.getInput('resourceGroupName')
-    const templateLocation = core.getInput('templateLocation')
-    const deploymentMode = core.getInput('deploymentMode')
-    const deploymentName = core.getInput('deploymentName')
-    const parameters = core.getInput('parameters')
+    const scope = getInput('scope')
+    const subscriptionId = getInput('subscriptionId')
+    const location = getInput('location')
+    const resourceGroupName = getInput('resourceGroupName')
+    const templateLocation = getInput('templateLocation')
+    const deploymentMode = getInput('deploymentMode')
+    const deploymentName = getInput('deploymentName')
+    const parameters = getInput('parameters')
 
     // change the subscription context
     await exec(`"${azPath}" account set --subscription ${subscriptionId}`)
 
     // Run the Deployment
-    let result = false;
+    let result: Outputs = {};
     switch(scope) {
         case "resourceGroup":
             result = await DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters)
@@ -39,15 +40,5 @@ export async function main(): Promise<number> {
             throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
     }
 
-    return result ? 0 : 1;
+    return result
 }
-
-main()
-    .then(statusCode => {
-        process.exit(statusCode)
-    })
-    .catch((err: Error) => {
-        console.log()
-        core.setFailed(err.message);
-        process.exit(1);
-    });

@@ -1,8 +1,8 @@
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
-import { ParseOutputs } from '../utils';
+import { ParseOutputs, Outputs } from '../utils/utils';
 
-export async function DeployResourceGroupScope(azPath: string, resourceGroupName: string, templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string): Promise<boolean> {    
+export async function DeployResourceGroupScope(azPath: string, resourceGroupName: string, templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string): Promise<Outputs> {    
     // Check if resourceGroupName is set
     if (!resourceGroupName) {
         throw Error("ResourceGroup name must be set.")

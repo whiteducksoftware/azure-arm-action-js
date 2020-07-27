@@ -1,8 +1,13 @@
 import { exec } from '@actions/exec';
 import { ExecOptions } from '@actions/exec/lib/interfaces';
-import { ParseOutputs } from '../utils';
+import { ParseOutputs, Outputs } from '../utils/utils';
 
-export async function DeployManagementGroupScope(azPath: string, location: string,  templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string): Promise<boolean> {    
+export async function DeployManagementGroupScope(azPath: string, location: string,  templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string): Promise<Outputs> {    
+    // Check if location is set
+    if (!location) {
+        throw Error("Location must be set.")
+    }
+    
     // create the parameter list
     const azDeployParameters = [
         location ? `--location ${location}` : undefined,

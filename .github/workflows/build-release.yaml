@@ -24,8 +24,7 @@ jobs:
 
       - name: Compile files
         run: |
-          tsc
-          ncc build src/main.js
+          ncc build src/entrypoint.ts
 
       - name: Commit Files
         continue-on-error: true # commit will fail if the code wasn't changed. Prevent the build to fail in this case.
