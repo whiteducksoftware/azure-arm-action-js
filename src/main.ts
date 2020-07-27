@@ -1,3 +1,4 @@
+import { info } from '@actions/core';
 import { which } from '@actions/io';
 import { DeployResourceGroupScope } from './deploy/scope_resourcegroup';
 import { exec } from '@actions/exec';
@@ -22,7 +23,8 @@ export async function main(): Promise<Outputs> {
     const parameters = getInput('parameters')
 
     // change the subscription context
-    await exec(`"${azPath}" account set --subscription ${subscriptionId}`)
+    info("Changing subscription context...")
+    await exec(`"${azPath}" account set --subscription ${subscriptionId}`, [], { silent: true })
 
     // Run the Deployment
     let result: Outputs = {};
