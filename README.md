@@ -13,7 +13,7 @@ A GitHub Action to deploy ARM templates.
 
 ## Inputs
 
-* `scope`: **Required** Provide the scope of the deployment. alid values are: 'resourcegroup', 'managementgroup', 'subscription'
+* `scope`: **Required** Provide the scope of the deployment. Valid values are: `resourcegroup`, `managementgroup`, `subscription`
 
 * `subscriptionId` **Required** Provide the Id of the subscription which should be used.
 
