@@ -17,7 +17,7 @@ A GitHub Action to deploy ARM templates.
 
 * `subscriptionId` **Required** Provide the Id of the subscription which should be used.
 
-* `location` Provide the target region, only required for management Group or Subscription deployments.
+* `location` Provide the target region, only required for Management Group or Subscription deployments.
 
 * `resourceGroupName` Provide the name of a resource group.
 
