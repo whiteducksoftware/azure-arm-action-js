@@ -27,7 +27,7 @@ export async function main(): Promise<Outputs> {
     // Run the Deployment
     let result: Outputs = {};
     switch(scope) {
-        case "resourceGroup":
+        case "resourcegroup":
             result = await DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters)
             break
         case "managementgroup":

@@ -24,7 +24,8 @@ jobs:
 
       - name: Test
         env:
-          RUN_TESTS: 1
+          INPUT_SCOPE: resourcegroup
+          INPUT_SUBSCRIPTIONID: ${{ secrets.SUBSCRIPTION_ID }}
           INPUT_RESOURCEGROUPNAME: azurearmaction
           INPUT_TEMPLATELOCATION: ./test/template.json
           INPUT_PARAMETERS: ./test/parameters.json
