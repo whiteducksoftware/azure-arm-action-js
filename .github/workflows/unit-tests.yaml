@@ -30,4 +30,4 @@ jobs:
           INPUT_PARAMETERS: ./test/parameters.json
           INPUT_DEPLOYMENTNAME: github-test
           INPUT_DEPLOYMENTMODE: Incremental
-        run: ts-node src/main.ts
+        run: ts-node test/main.tests.ts
