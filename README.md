@@ -40,6 +40,7 @@ For more Information see [examples/Advanced.md](examples/Advanced.md).
 - uses: whiteducksoftware/azure-arm-action-js@v3
   with:
     scope: resourcegroup
+    subscriptionId: <YourSubscriptionId>
     resourceGroupName: <YourResourceGroup>
     templateLocation: <path/to/azuredeploy.json>
 ```
@@ -61,6 +62,7 @@ jobs:
     - uses: whiteducksoftware/azure-arm-action-js@v3
       with:
         scope: resourcegroup
+        subscriptionId: e1046c08-7072-****-****-************
         resourceGroupName: github-action-arm-rg
         templateLocation: ./azuredeploy.json
         parameters: storageAccountType=Standard_LRS

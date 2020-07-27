@@ -7,6 +7,8 @@ Our template has two outputs `location` and `containerName`. But we are only int
 - uses: whiteducksoftware/azure-arm-action-js@v3
   id: deploy
   with:
+    scope: resourcegroup
+    subscriptionId: e1046c08-7072-****-****-************
     resourceGroupName: azurearmaction
     templateLocation: examples/template/template.json
     parameters: examples/template/parameters.json
@@ -38,6 +40,8 @@ Now we add our second deployment which relies on that value and modfies the `con
 - uses: whiteducksoftware/azure-arm-action-js@v3
   id: deploy2
   with:
+    scope: resourcegroup
+    subscriptionId: e1046c08-7072-****-****-************
     resourceGroupName: azurearmaction
     templateLocation: examples/template/template.json
     parameters: examples/template/parameters.json containerName=${{ steps.deploy.outputs.containerName }}-overriden

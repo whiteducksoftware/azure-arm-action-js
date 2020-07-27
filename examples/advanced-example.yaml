@@ -18,19 +18,23 @@ jobs:
       - uses: whiteducksoftware/azure-arm-action-js@v3
         id: deploy
         with:
-            resourceGroupName: azurearmaction
-            templateLocation: examples/template/template.json
-            parameters: examples/template/parameters.json
-            deploymentName: github-advanced-test
+          scope: resourcegroup
+          subscriptionId: e1046c08-7072-****-****-************
+          resourceGroupName: azurearmaction
+          templateLocation: examples/template/template.json
+          parameters: examples/template/parameters.json
+          deploymentName: github-advanced-test
 
       - run: echo ${{ steps.deploy.outputs.containerName }}
 
       - uses: whiteducksoftware/azure-arm-action-js@v3
         id: deploy2
         with:
-            resourceGroupName: azurearmaction
-            templateLocation: examples/template/template.json
-            parameters: examples/template/parameters.json containerName=${{ steps.deploy.outputs.containerName }}-overriden
-            deploymentName: github-advanced-test              
+          scope: resourcegroup
+          subscriptionId: e1046c08-7072-****-****-************
+          resourceGroupName: azurearmaction
+          templateLocation: examples/template/template.json
+          parameters: examples/template/parameters.json containerName=${{ steps.deploy.outputs.containerName }}-overriden
+          deploymentName: github-advanced-test              
               
       - run: echo ${{ steps.deploy2.outputs.containerName }}
