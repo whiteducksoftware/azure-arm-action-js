@@ -13,9 +13,15 @@ A GitHub Action to deploy ARM templates.
 
 ## Inputs
 
-* `resourceGroupName` **Required** Provide the name of a resource group.
+* `scope`: **Required** Provide the scope of the deployment. alid values are: 'resourcegroup', 'managementgroup', 'subscription'
 
-* `templateLocation` **Required** Specify the path to the Azure Resource Manager template.
+* `subscriptionId` **Required** Provide the Id of the subscription which should be used.
+
+* `location` Provide the target region, only required for management Group or Subscription deployments.
+
+* `resourceGroupName` Provide the name of a resource group.
+
+* `templateLocation` **Required** Specify the path or URL to the Azure Resource Manager template.
 
 * `deploymentMode` Incremental (only add resources to resource group) or Complete (remove extra resources from resource group). Default: `Incremental`.
   
@@ -33,6 +39,7 @@ For more Information see [examples/Advanced.md](examples/Advanced.md).
 ```yml
 - uses: whiteducksoftware/azure-arm-action-js@v3
   with:
+    scope: resourcegroup
     resourceGroupName: <YourResourceGroup>
     templateLocation: <path/to/azuredeploy.json>
 ```
@@ -53,6 +60,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - uses: whiteducksoftware/azure-arm-action-js@v3
       with:
+        scope: resourcegroup
         resourceGroupName: github-action-arm-rg
         templateLocation: ./azuredeploy.json
         parameters: storageAccountType=Standard_LRS
