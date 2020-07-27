@@ -650,6 +650,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(827);
 const exec_1 = __webpack_require__(120);
 const utils_1 = __webpack_require__(93);
 function DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters) {
@@ -671,6 +672,8 @@ function DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, d
         // configure exec to write the json output to a buffer
         let commandOutput = '';
         const options = {
+            silent: true,
+            failOnStdErr: true,
             listeners: {
                 stdline: (data) => {
                     if (!data.startsWith("[command]"))
@@ -680,10 +683,13 @@ function DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, d
             }
         };
         // validate the deployment
-        yield exec_1.exec(`"${azPath}" deployment group validate ${azDeployParameters} -o json`, [], options);
+        core_1.info("Validating template...");
+        yield exec_1.exec(`"${azPath}" deployment group validate ${azDeployParameters} -o json`, [], { silent: true });
         // execute the deployment
+        core_1.info("Creating deployment...");
         yield exec_1.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
         // Parse the Outputs
+        core_1.info("Parsing outputs...");
         return utils_1.ParseOutputs(commandOutput);
     });
 }
@@ -841,6 +847,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const exec_1 = __webpack_require__(120);
 const utils_1 = __webpack_require__(93);
+const core_1 = __webpack_require__(827);
 function DeploySubscriptionScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters) {
     return __awaiter(this, void 0, void 0, function* () {
         // Check if location is set
@@ -860,6 +867,8 @@ function DeploySubscriptionScope(azPath, location, templateLocation, deploymentM
         // configure exec to write the json output to a buffer
         let commandOutput = '';
         const options = {
+            silent: true,
+            failOnStdErr: true,
             listeners: {
                 stdline: (data) => {
                     if (!data.startsWith("[command]"))
@@ -869,10 +878,13 @@ function DeploySubscriptionScope(azPath, location, templateLocation, deploymentM
             }
         };
         // validate the deployment
-        yield exec_1.exec(`"${azPath}" deployment sub validate ${azDeployParameters} -o json`, [], options);
+        core_1.info("Validating template...");
+        yield exec_1.exec(`"${azPath}" deployment sub validate ${azDeployParameters} -o json`, [], { silent: true, failOnStdErr: true });
         // execute the deployment
+        core_1.info("Creating deployment...");
         yield exec_1.exec(`"${azPath}" deployment sub create ${azDeployParameters} -o json`, [], options);
         // Parse the Outputs
+        core_1.info("Parsing outputs...");
         return utils_1.ParseOutputs(commandOutput);
     });
 }
@@ -897,6 +909,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const exec_1 = __webpack_require__(120);
 const utils_1 = __webpack_require__(93);
+const core_1 = __webpack_require__(827);
 function DeployManagementGroupScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters) {
     return __awaiter(this, void 0, void 0, function* () {
         // Check if location is set
@@ -916,6 +929,8 @@ function DeployManagementGroupScope(azPath, location, templateLocation, deployme
         // configure exec to write the json output to a buffer
         let commandOutput = '';
         const options = {
+            silent: true,
+            failOnStdErr: true,
             listeners: {
                 stdline: (data) => {
                     if (!data.startsWith("[command]"))
@@ -925,10 +940,13 @@ function DeployManagementGroupScope(azPath, location, templateLocation, deployme
             }
         };
         // validate the deployment
-        yield exec_1.exec(`"${azPath}" deployment mg validate ${azDeployParameters} -o json`, [], options);
+        core_1.info("Validating template...");
+        yield exec_1.exec(`"${azPath}" deployment mg validate ${azDeployParameters} -o json`, [], { silent: true, failOnStdErr: true });
         // execute the deployment
+        core_1.info("Creating deployment...");
         yield exec_1.exec(`"${azPath}" deployment mg create ${azDeployParameters} -o json`, [], options);
         // Parse the Outputs
+        core_1.info("Parsing outputs...");
         return utils_1.ParseOutputs(commandOutput);
     });
 }
@@ -1768,28 +1786,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = __webpack_require__(827);
 const io_1 = __webpack_require__(51);
 const scope_resourcegroup_1 = __webpack_require__(191);
 const exec_1 = __webpack_require__(120);
 const scope_managementgroup_1 = __webpack_require__(723);
 const scope_subscription_1 = __webpack_require__(718);
-const core_1 = __webpack_require__(827);
+const core_2 = __webpack_require__(827);
 // Action Main code
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         // determine az path
         const azPath = yield io_1.which("az", true);
         // retrieve action variables
-        const scope = core_1.getInput('scope');
-        const subscriptionId = core_1.getInput('subscriptionId');
-        const location = core_1.getInput('location');
-        const resourceGroupName = core_1.getInput('resourceGroupName');
-        const templateLocation = core_1.getInput('templateLocation');
-        const deploymentMode = core_1.getInput('deploymentMode');
-        const deploymentName = core_1.getInput('deploymentName');
-        const parameters = core_1.getInput('parameters');
+        const scope = core_2.getInput('scope');
+        const subscriptionId = core_2.getInput('subscriptionId');
+        const location = core_2.getInput('location');
+        const resourceGroupName = core_2.getInput('resourceGroupName');
+        const templateLocation = core_2.getInput('templateLocation');
+        const deploymentMode = core_2.getInput('deploymentMode');
+        const deploymentName = core_2.getInput('deploymentName');
+        const parameters = core_2.getInput('parameters');
         // change the subscription context
-        yield exec_1.exec(`"${azPath}" account set --subscription ${subscriptionId}`);
+        core_1.info("Changing subscription context...");
+        yield exec_1.exec(`"${azPath}" account set --subscription ${subscriptionId}`, [], { silent: true });
         // Run the Deployment
         let result = {};
         switch (scope) {
