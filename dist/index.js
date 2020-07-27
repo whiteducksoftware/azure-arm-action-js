@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(994);
+/******/ 		return __webpack_require__(464);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -555,56 +555,32 @@ module.exports = require("os");
 
 /***/ }),
 
-/***/ 98:
+/***/ 93:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeploySubscriptionScope = void 0;
-const exec_1 = __webpack_require__(120);
-const utils_1 = __webpack_require__(586);
-function DeploySubscriptionScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // create the parameter list
-        const azDeployParameters = [
-            location ? `--location ${location}` : undefined,
-            templateLocation ?
-                templateLocation.startsWith("http") ? `--template-uri ${templateLocation}` : `--template-file ${templateLocation}`
-                : undefined,
-            deploymentMode ? `--mode ${deploymentMode}` : undefined,
-            deploymentName ? `--name ${deploymentName}` : undefined,
-            parameters ? `--parameters ${parameters}` : undefined
-        ].filter(Boolean).join(' ');
-        // configure exec to write the json output to a buffer
-        let commandOutput = '';
-        const options = {
-            listeners: {
-                stdline: (data) => {
-                    if (!data.startsWith("[command]"))
-                        commandOutput += data;
-                    // console.log(data);
-                },
-            }
-        };
-        // validate the deployment
-        yield exec_1.exec(`"${azPath}" deployment sub validate ${azDeployParameters} -o json`, [], options);
-        // execute the deployment
-        yield exec_1.exec(`"${azPath}" deployment sub create ${azDeployParameters} -o json`, [], options);
-        // Parse the Outputs
-        return utils_1.ParseOutputs(commandOutput);
-    });
+const core = __importStar(__webpack_require__(827));
+function ParseOutputs(commandOutput) {
+    // parse the result and save the outputs
+    var result = JSON.parse(commandOutput);
+    var object = result.properties.outputs;
+    for (const key in object) {
+        if (object.hasOwnProperty(key)) {
+            core.setOutput(key, object[key].value);
+        }
+    }
+    return object;
 }
-exports.DeploySubscriptionScope = DeploySubscriptionScope;
+exports.ParseOutputs = ParseOutputs;
 
 
 /***/ }),
@@ -657,6 +633,62 @@ exports.exec = exec;
 /***/ (function(module) {
 
 module.exports = require("child_process");
+
+/***/ }),
+
+/***/ 191:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const exec_1 = __webpack_require__(120);
+const utils_1 = __webpack_require__(93);
+function DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Check if resourceGroupName is set
+        if (!resourceGroupName) {
+            throw Error("ResourceGroup name must be set.");
+        }
+        // create the parameter list
+        const azDeployParameters = [
+            resourceGroupName ? `--resource-group ${resourceGroupName}` : undefined,
+            templateLocation ?
+                templateLocation.startsWith("http") ? `--template-uri ${templateLocation}` : `--template-file ${templateLocation}`
+                : undefined,
+            deploymentMode ? `--mode ${deploymentMode}` : undefined,
+            deploymentName ? `--name ${deploymentName}` : undefined,
+            parameters ? `--parameters ${parameters}` : undefined
+        ].filter(Boolean).join(' ');
+        // configure exec to write the json output to a buffer
+        let commandOutput = '';
+        const options = {
+            listeners: {
+                stdline: (data) => {
+                    if (!data.startsWith("[command]"))
+                        commandOutput += data;
+                    // console.log(data);
+                },
+            }
+        };
+        // validate the deployment
+        yield exec_1.exec(`"${azPath}" deployment group validate ${azDeployParameters} -o json`, [], options);
+        // execute the deployment
+        yield exec_1.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
+        // Parse the Outputs
+        return utils_1.ParseOutputs(commandOutput);
+    });
+}
+exports.DeployResourceGroupScope = DeployResourceGroupScope;
+
 
 /***/ }),
 
@@ -752,45 +784,22 @@ module.exports = require("assert");
 
 /***/ }),
 
-/***/ 586:
+/***/ 464:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ParseOutputs = void 0;
-const core = __importStar(__webpack_require__(827));
-function ParseOutputs(commandOutput) {
-    // parse the result and save the outputs
-    var result = JSON.parse(commandOutput);
-    var object = result.properties.outputs;
-    for (const key in object) {
-        if (object.hasOwnProperty(key)) {
-            core.setOutput(key, object[key].value);
-        }
-    }
-    return object;
-}
-exports.ParseOutputs = ParseOutputs;
+const core_1 = __webpack_require__(827);
+const main_1 = __webpack_require__(982);
+main_1.main()
+    .then(() => {
+    process.exit(0);
+})
+    .catch((err) => {
+    core_1.setFailed(err.message);
+    process.exit(1);
+});
 
 
 /***/ }),
@@ -813,6 +822,118 @@ module.exports = require("path");
 /***/ (function(module) {
 
 module.exports = require("util");
+
+/***/ }),
+
+/***/ 718:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const exec_1 = __webpack_require__(120);
+const utils_1 = __webpack_require__(93);
+function DeploySubscriptionScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Check if location is set
+        if (!location) {
+            throw Error("Location must be set.");
+        }
+        // create the parameter list
+        const azDeployParameters = [
+            location ? `--location ${location}` : undefined,
+            templateLocation ?
+                templateLocation.startsWith("http") ? `--template-uri ${templateLocation}` : `--template-file ${templateLocation}`
+                : undefined,
+            deploymentMode ? `--mode ${deploymentMode}` : undefined,
+            deploymentName ? `--name ${deploymentName}` : undefined,
+            parameters ? `--parameters ${parameters}` : undefined
+        ].filter(Boolean).join(' ');
+        // configure exec to write the json output to a buffer
+        let commandOutput = '';
+        const options = {
+            listeners: {
+                stdline: (data) => {
+                    if (!data.startsWith("[command]"))
+                        commandOutput += data;
+                    // console.log(data);
+                },
+            }
+        };
+        // validate the deployment
+        yield exec_1.exec(`"${azPath}" deployment sub validate ${azDeployParameters} -o json`, [], options);
+        // execute the deployment
+        yield exec_1.exec(`"${azPath}" deployment sub create ${azDeployParameters} -o json`, [], options);
+        // Parse the Outputs
+        return utils_1.ParseOutputs(commandOutput);
+    });
+}
+exports.DeploySubscriptionScope = DeploySubscriptionScope;
+
+
+/***/ }),
+
+/***/ 723:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const exec_1 = __webpack_require__(120);
+const utils_1 = __webpack_require__(93);
+function DeployManagementGroupScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Check if location is set
+        if (!location) {
+            throw Error("Location must be set.");
+        }
+        // create the parameter list
+        const azDeployParameters = [
+            location ? `--location ${location}` : undefined,
+            templateLocation ?
+                templateLocation.startsWith("http") ? `--template-uri ${templateLocation}` : `--template-file ${templateLocation}`
+                : undefined,
+            deploymentMode ? `--mode ${deploymentMode}` : undefined,
+            deploymentName ? `--name ${deploymentName}` : undefined,
+            parameters ? `--parameters ${parameters}` : undefined
+        ].filter(Boolean).join(' ');
+        // configure exec to write the json output to a buffer
+        let commandOutput = '';
+        const options = {
+            listeners: {
+                stdline: (data) => {
+                    if (!data.startsWith("[command]"))
+                        commandOutput += data;
+                    // console.log(data);
+                },
+            }
+        };
+        // validate the deployment
+        yield exec_1.exec(`"${azPath}" deployment mg validate ${azDeployParameters} -o json`, [], options);
+        // execute the deployment
+        yield exec_1.exec(`"${azPath}" deployment mg create ${azDeployParameters} -o json`, [], options);
+        // Parse the Outputs
+        return utils_1.ParseOutputs(commandOutput);
+    });
+}
+exports.DeployManagementGroupScope = DeployManagementGroupScope;
+
 
 /***/ }),
 
@@ -1633,177 +1754,44 @@ class ExecState extends events.EventEmitter {
 
 /***/ }),
 
-/***/ 895:
+/***/ 982:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeployResourceGroupScope = void 0;
+const io_1 = __webpack_require__(51);
+const scope_resourcegroup_1 = __webpack_require__(191);
 const exec_1 = __webpack_require__(120);
-const utils_1 = __webpack_require__(586);
-function DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // Check if resourceGroupName is set
-        if (!resourceGroupName) {
-            throw Error("ResourceGroup name must be set.");
-        }
-        // create the parameter list
-        const azDeployParameters = [
-            resourceGroupName ? `--resource-group ${resourceGroupName}` : undefined,
-            templateLocation ?
-                templateLocation.startsWith("http") ? `--template-uri ${templateLocation}` : `--template-file ${templateLocation}`
-                : undefined,
-            deploymentMode ? `--mode ${deploymentMode}` : undefined,
-            deploymentName ? `--name ${deploymentName}` : undefined,
-            parameters ? `--parameters ${parameters}` : undefined
-        ].filter(Boolean).join(' ');
-        // configure exec to write the json output to a buffer
-        let commandOutput = '';
-        const options = {
-            listeners: {
-                stdline: (data) => {
-                    if (!data.startsWith("[command]"))
-                        commandOutput += data;
-                    // console.log(data);
-                },
-            }
-        };
-        // validate the deployment
-        yield exec_1.exec(`"${azPath}" deployment group validate ${azDeployParameters} -o json`, [], options);
-        // execute the deployment
-        yield exec_1.exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
-        // Parse the Outputs
-        return utils_1.ParseOutputs(commandOutput);
-    });
-}
-exports.DeployResourceGroupScope = DeployResourceGroupScope;
-
-
-/***/ }),
-
-/***/ 899:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeployManagementGroupScope = void 0;
-const exec_1 = __webpack_require__(120);
-const utils_1 = __webpack_require__(586);
-function DeployManagementGroupScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // create the parameter list
-        const azDeployParameters = [
-            location ? `--location ${location}` : undefined,
-            templateLocation ?
-                templateLocation.startsWith("http") ? `--template-uri ${templateLocation}` : `--template-file ${templateLocation}`
-                : undefined,
-            deploymentMode ? `--mode ${deploymentMode}` : undefined,
-            deploymentName ? `--name ${deploymentName}` : undefined,
-            parameters ? `--parameters ${parameters}` : undefined
-        ].filter(Boolean).join(' ');
-        // configure exec to write the json output to a buffer
-        let commandOutput = '';
-        const options = {
-            listeners: {
-                stdline: (data) => {
-                    if (!data.startsWith("[command]"))
-                        commandOutput += data;
-                    // console.log(data);
-                },
-            }
-        };
-        // validate the deployment
-        yield exec_1.exec(`"${azPath}" deployment mg validate ${azDeployParameters} -o json`, [], options);
-        // execute the deployment
-        yield exec_1.exec(`"${azPath}" deployment mg create ${azDeployParameters} -o json`, [], options);
-        // Parse the Outputs
-        return utils_1.ParseOutputs(commandOutput);
-    });
-}
-exports.DeployManagementGroupScope = DeployManagementGroupScope;
-
-
-/***/ }),
-
-/***/ 994:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.main = void 0;
-const core = __importStar(__webpack_require__(827));
-const io = __importStar(__webpack_require__(51));
-const scope_resourcegroup_1 = __webpack_require__(895);
-const exec_1 = __webpack_require__(120);
-const scope_managementgroup_1 = __webpack_require__(899);
-const scope_subscription_1 = __webpack_require__(98);
+const scope_managementgroup_1 = __webpack_require__(723);
+const scope_subscription_1 = __webpack_require__(718);
+const core_1 = __webpack_require__(827);
 // Action Main code
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         // determine az path
-        const azPath = yield io.which("az", true);
+        const azPath = yield io_1.which("az", true);
         // retrieve action variables
-        const scope = core.getInput('scope');
-        const subscriptionId = core.getInput('subscriptionId');
-        const location = core.getInput('location');
-        const resourceGroupName = core.getInput('resourceGroupName');
-        const templateLocation = core.getInput('templateLocation');
-        const deploymentMode = core.getInput('deploymentMode');
-        const deploymentName = core.getInput('deploymentName');
-        const parameters = core.getInput('parameters');
+        const scope = core_1.getInput('scope');
+        const subscriptionId = core_1.getInput('subscriptionId');
+        const location = core_1.getInput('location');
+        const resourceGroupName = core_1.getInput('resourceGroupName');
+        const templateLocation = core_1.getInput('templateLocation');
+        const deploymentMode = core_1.getInput('deploymentMode');
+        const deploymentName = core_1.getInput('deploymentName');
+        const parameters = core_1.getInput('parameters');
         // change the subscription context
         yield exec_1.exec(`"${azPath}" account set --subscription ${subscriptionId}`);
         // Run the Deployment
-        let result = false;
+        let result = {};
         switch (scope) {
             case "resourceGroup":
                 result = yield scope_resourcegroup_1.DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters);
@@ -1817,19 +1805,10 @@ function main() {
             default:
                 throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'");
         }
-        return result ? 0 : 1;
+        return result;
     });
 }
 exports.main = main;
-main()
-    .then(statusCode => {
-    process.exit(statusCode);
-})
-    .catch((err) => {
-    console.log();
-    core.setFailed(err.message);
-    process.exit(1);
-});
 
 
 /***/ })
