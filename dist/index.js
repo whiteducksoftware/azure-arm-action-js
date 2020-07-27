@@ -1793,7 +1793,7 @@ function main() {
         // Run the Deployment
         let result = {};
         switch (scope) {
-            case "resourceGroup":
+            case "resourcegroup":
                 result = yield scope_resourcegroup_1.DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters);
                 break;
             case "managementgroup":
