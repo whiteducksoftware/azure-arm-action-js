@@ -23,10 +23,11 @@ jobs:
       - name: Test
         env:
           INPUT_SCOPE: resourcegroup
-          INPUT_SUBSCRIPTIONID: ${{ secrets.SUBSCRIPTION_ID }}
+          INPUT_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+          INPUT_LOCATION: westeurope
           INPUT_RESOURCEGROUPNAME: azurearmaction
           INPUT_TEMPLATELOCATION: ./test/template.json
-          INPUT_PARAMETERS: ./test/parameters.json
+          INPUT_PARAMETERSLOCATION: ./test/parameters.json
           INPUT_DEPLOYMENTNAME: github-test
           INPUT_DEPLOYMENTMODE: Incremental
         run: ts-node test/main.tests.ts
