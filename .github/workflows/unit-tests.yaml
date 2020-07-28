@@ -2,8 +2,6 @@ name: Unit Tests
 on:
   pull_request:
   push:
-    branches:
-        - '*'
 
 jobs:
   test_action_job:
