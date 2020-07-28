@@ -2,8 +2,6 @@ name: Unit Tests
 on:
   pull_request:
   push:
-    branches:
-        - 'master'
 
 jobs:
   test_action_job:
@@ -11,9 +9,7 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v1
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
@@ -25,10 +21,12 @@ jobs:
       - name: Test
         env:
           INPUT_SCOPE: resourcegroup
-          INPUT_SUBSCRIPTIONID: ${{ secrets.SUBSCRIPTION_ID }}
+          INPUT_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+          INPUT_LOCATION: westeurope
           INPUT_RESOURCEGROUPNAME: azurearmaction
           INPUT_TEMPLATELOCATION: ./test/template.json
           INPUT_PARAMETERS: ./test/parameters.json
+          INPUT_OVERRIDEPARAMETERS: ./test/parameters.override.json
           INPUT_DEPLOYMENTNAME: github-test
           INPUT_DEPLOYMENTMODE: Incremental
-        run: ts-node test/main.tests.ts
+        run: npm run test

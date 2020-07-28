@@ -1,48 +1,45 @@
 import { info } from '@actions/core';
-import { exec } from '@actions/exec';
-import { ExecOptions } from '@actions/exec/lib/interfaces';
-import { ParseOutputs, Outputs } from '../utils/utils';
+import { Outputs, Parameters, Template } from '../utils/utils';
+import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-resources';
+import { v4 as uuidv4 } from 'uuid';
 
-export async function DeployResourceGroupScope(azPath: string, resourceGroupName: string, templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string): Promise<Outputs> {    
+export async function DeployResourceGroupScope(client: ResourceManagementClient, resourceGroupName: string, location: string, template: Template, mode: ResourceManagementModels.DeploymentMode, deploymentName: string, parameters: Parameters): Promise<Outputs> {    
+    // Check if location is set
+    if (!location) {
+        throw Error("Location must be set.")
+    }
+    
     // Check if resourceGroupName is set
     if (!resourceGroupName) {
         throw Error("ResourceGroup name must be set.")
     }
 
-    // create the parameter list
-    const azDeployParameters = [
-        resourceGroupName ? `--resource-group ${resourceGroupName}` : undefined,
-        templateLocation ?
-            templateLocation.startsWith("http") ? `--template-uri ${templateLocation}`: `--template-file ${templateLocation}`
-        : undefined,
-        deploymentMode ? `--mode ${deploymentMode}` : undefined,
-        deploymentName ? `--name ${deploymentName}` : undefined,
-        parameters ? `--parameters ${parameters}` : undefined
-    ].filter(Boolean).join(' ');
+    // Create or update the resource group
+    client.resourceGroups.createOrUpdate(resourceGroupName, { location })
 
-    // configure exec to write the json output to a buffer
-    let commandOutput = '';
-    const options: ExecOptions = {
-        silent: true,
-        failOnStdErr: true,
-        listeners: {
-            stdline: (data: string) => {
-                if (!data.startsWith("[command]"))
-                    commandOutput += data;
-                // console.log(data);
-            },   
+    // generate deploymentName
+    const uuid = uuidv4()
+    const _deploymentName = `${deploymentName}-${uuid}`
+    info(`Creating deployment \x1b[32m${deploymentName}\x1b[0m with uuid \x1b[32m${uuid}\x1b[0m -> \x1b[32m${_deploymentName}\x1b[0m, mode: \x1b[32m${mode}\x1b[0m`)
+
+    // build deployment
+    const deployment: ResourceManagementModels.Deployment = {
+        properties: {
+            mode,
+            ...template,
+            ...parameters
         }
     }
 
     // validate the deployment
-    info("Validating template...")
-    await exec(`"${azPath}" deployment group validate ${azDeployParameters} -o json`, [], { silent: true });
+    info(`Validating deployment \x1b[32m${_deploymentName}\x1b[0m`)
+    await client.deployments.validate(resourceGroupName, _deploymentName, deployment)
+    info("Validation finished.")
 
     // execute the deployment
-    info("Creating deployment...")
-    await exec(`"${azPath}" deployment group create ${azDeployParameters} -o json`, [], options);
+    info(`Creating deployment \x1b[32m${_deploymentName}\x1b[0m`)
+    var response = await client.deployments.createOrUpdate(resourceGroupName, _deploymentName, deployment)
+    info("Template deployment finished.")
 
-    // Parse the Outputs
-    info("Parsing outputs...")
-    return ParseOutputs(commandOutput)
+    return response.properties?.outputs
 }
