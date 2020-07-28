@@ -33,6 +33,8 @@ A GitHub Action to deploy ARM templates.
 * `overrideParameters` Specify either the path to the Azure Resource Manager override parameters file or pass them as Key-Value Pairs.  
   (See also [examples/Advanced.md](examples/Advanced.md))
 
+* `managementGroupId` Specify the Id for the Management Group, only required for Management Group Deployments.
+
 ## Outputs
 Every template output will be exported as output. For example the output is called `containerName` then it will be available with `${{ steps.STEP.outputs.containerName }}`    
 For more Information see [examples/Advanced.md](examples/Advanced.md).    

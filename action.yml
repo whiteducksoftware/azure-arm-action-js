@@ -29,6 +29,9 @@ inputs:
   overrideParameters:
     description: "Specify either path to the Azure Resource Manager override parameters file or pass them as 'key1=value1;key2=value2;...'."
     required: false
+  managementGroupId:
+    description: "Specify the Id for the Management Group, only required for Management Group Deployments."
+    required: false
 branding:
   color: orange
   icon: package

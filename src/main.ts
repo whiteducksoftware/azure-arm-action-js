@@ -27,6 +27,7 @@ export async function main(): Promise<Outputs> {
     const deploymentName = getInput('deploymentName')
     const parameters = getInput('parameters')
     const overrideParameters = getInput('overrideParameters')
+    const managementGroupdId = getInput('managementGroupId')
 
     // Parse the inputs
     const template = ReadTemplate(templateLocation)
@@ -43,7 +44,7 @@ export async function main(): Promise<Outputs> {
             result = await DeployResourceGroupScope(client, resourceGroupName, location, template, deploymentMode, deploymentName, mergedParameters)
             break
         case "managementgroup":
-            result = await DeployManagementGroupScope(client, "", location, template, deploymentMode, deploymentName, mergedParameters)
+            result = await DeployManagementGroupScope(client, managementGroupdId, location, template, deploymentMode, deploymentName, mergedParameters)
             break
         case "subscription":
             result = await DeploySubscriptionScope(client, location, template, deploymentMode, deploymentName, mergedParameters)
