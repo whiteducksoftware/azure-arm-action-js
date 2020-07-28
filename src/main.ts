@@ -1,42 +1,47 @@
-import { info } from '@actions/core';
-import { which } from '@actions/io';
 import { DeployResourceGroupScope } from './deploy/scope_resourcegroup';
-import { exec } from '@actions/exec';
 import { DeployManagementGroupScope } from './deploy/scope_managementgroup';
 import { DeploySubscriptionScope } from './deploy/scope_subscription';
-import { Outputs } from './utils/utils';
 import { getInput } from '@actions/core';
+import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-resources';
+import { Outputs } from './utils/utils';
+import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
+
+type SDKAuth = {
+	clientId: string
+	clientSecret: string
+	subscriptionId: string
+	tenantId: string
+}
+
+type Scope = 'resourcegroup' | 'managementgroup' | 'subscription'
 
 // Action Main code
 export async function main(): Promise<Outputs> {
-    // determine az path
-    const azPath = await which("az", true);
-
     // retrieve action variables
-    const scope = getInput('scope')
-    const subscriptionId = getInput('subscriptionId')
+    const scope = getInput('scope') as Scope
+    const credentials = JSON.parse(getInput(`credentials`)) as SDKAuth
     const location = getInput('location')
     const resourceGroupName = getInput('resourceGroupName')
     const templateLocation = getInput('templateLocation')
-    const deploymentMode = getInput('deploymentMode')
+    const deploymentMode = getInput('deploymentMode') as ResourceManagementModels.DeploymentMode
     const deploymentName = getInput('deploymentName')
-    const parameters = getInput('parameters')
-
-    // change the subscription context
-    info("Changing subscription context...")
-    await exec(`"${azPath}" account set --subscription ${subscriptionId}`, [], { silent: true })
+    const parametersLocation = getInput('parametersLocation')
+    
+    // retrive the credentials
+    const creds = await msRestNodeAuth.loginWithServicePrincipalSecret(credentials.clientId, credentials.clientSecret, credentials.tenantId)
+    const client = new ResourceManagementClient(creds, credentials.subscriptionId);
 
     // Run the Deployment
     let result: Outputs = {};
     switch(scope) {
         case "resourcegroup":
-            result = await DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters)
+            result = await DeployResourceGroupScope(client, resourceGroupName, location, templateLocation, deploymentMode, deploymentName, parametersLocation)
             break
         case "managementgroup":
-            result = await DeployManagementGroupScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters)
+            result = await DeployManagementGroupScope(client, "", location, templateLocation, deploymentMode, deploymentName, parametersLocation)
             break
         case "subscription":
-            result = await DeploySubscriptionScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters)
+            result = await DeploySubscriptionScope(client, location, templateLocation, deploymentMode, deploymentName, parametersLocation)
             break
         default:
             throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
