@@ -4,6 +4,11 @@ import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-r
 import { v4 as uuidv4 } from 'uuid';
 
 export async function DeployResourceGroupScope(client: ResourceManagementClient, resourceGroupName: string, location: string, template: Template, mode: ResourceManagementModels.DeploymentMode, deploymentName: string, parameters: Parameters): Promise<Outputs> {    
+    // Check if location is set
+    if (!location) {
+        throw Error("Location must be set.")
+    }
+    
     // Check if resourceGroupName is set
     if (!resourceGroupName) {
         throw Error("ResourceGroup name must be set.")
