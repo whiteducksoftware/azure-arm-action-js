@@ -26,7 +26,7 @@ jobs:
           INPUT_RESOURCEGROUPNAME: azurearmaction
           INPUT_TEMPLATELOCATION: ./test/template.json
           INPUT_PARAMETERS: ./test/parameters.json
-          INPUT_OVERRIDEPARAMETERS: ./test/paramters.override.json
+          INPUT_OVERRIDEPARAMETERS: ./test/parameters.override.json
           INPUT_DEPLOYMENTNAME: github-test
           INPUT_DEPLOYMENTMODE: Incremental
         run: ts-node test/main.tests.ts
