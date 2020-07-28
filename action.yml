@@ -24,7 +24,7 @@ inputs:
     description: "Specifies the name of the resource group deployment to create."
     required: false
   parameters:
-    description: "Supply the path or URL to the Azure Resource Manager parameters."
+    description: "Supply either the path to the Azure Resource Manager parameters file or pass them as 'key1=value1;key2=value2;...'."
     required: false
   overrideParameters:
     description: "Specify either path to the Azure Resource Manager override parameters file or pass them as 'key1=value1;key2=value2;...'."

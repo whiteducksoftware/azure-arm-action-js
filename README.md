@@ -27,10 +27,10 @@ A GitHub Action to deploy ARM templates.
   
 * `deploymentName` Specifies the name of the resource group deployment to create.
 
-* `parameters` Supply the path to the Azure Resource Manager parameters or pass them as Key-Value Pairs. 
+* `parameters` Supply either the path to the Azure Resource Manager parameters file or pass them as Key-Value Pairs. 
   (See also [examples/Advanced.md](examples/Advanced.md))
 
-* `overrideParameters` Specify the path to the Azure Resource Manager override parameters file or pass them as Key-Value Pairs.  
+* `overrideParameters` Specify either the path to the Azure Resource Manager override parameters file or pass them as Key-Value Pairs.  
   (See also [examples/Advanced.md](examples/Advanced.md))
 
 ## Outputs
