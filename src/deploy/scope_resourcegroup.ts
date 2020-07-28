@@ -20,7 +20,7 @@ export async function DeployResourceGroupScope(client: ResourceManagementClient,
     // generate deploymentName
     const uuid = uuidv4()
     const _deploymentName = `${deploymentName}-${uuid}`
-    info(`Creating deployment ${deploymentName} with uuid ${uuid} -> ${_deploymentName}, mode: ${mode}`)
+    info(`Creating deployment \x1b[32m${deploymentName}\x1b[0m with uuid \x1b[32m${uuid}\x1b[0m -> \x1b[32m${_deploymentName}\x1b[0m, mode: \x1b[32m${mode}\x1b[0m`)
 
     // build deployment
     const deployment: ResourceManagementModels.Deployment = {
@@ -32,12 +32,12 @@ export async function DeployResourceGroupScope(client: ResourceManagementClient,
     }
 
     // validate the deployment
-    info(`Validating deployment ${_deploymentName}`)
+    info(`Validating deployment \x1b[32m${_deploymentName}\x1b[0m`)
     await client.deployments.validate(resourceGroupName, _deploymentName, deployment)
     info("Validation finished.")
 
     // execute the deployment
-    info(`Creating deployment ${_deploymentName}`)
+    info(`Creating deployment \x1b[32m${_deploymentName}\x1b[0m`)
     var response = await client.deployments.createOrUpdate(resourceGroupName, _deploymentName, deployment)
     info("Template deployment finished.")
 
