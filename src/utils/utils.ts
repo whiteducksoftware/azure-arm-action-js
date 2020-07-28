@@ -40,7 +40,7 @@ export function ReadParametersJson(filePath: string): { parameters: any } {
 }
 
 export function ReadParametersKVPairs(kvPairs: string): { parameters: any } {
-    var pairs = kvPairs.split(/[ ,]+/)
+    var pairs = kvPairs.split(/[ ;,]+/)
     var parameters: { [index: string]: { value: string } } = {};
     for (let index = 0; index < pairs.length; index++) {
         var split = pairs[index].split("=")
