@@ -3,7 +3,7 @@ import { DeployManagementGroupScope } from './deploy/scope_managementgroup';
 import { DeploySubscriptionScope } from './deploy/scope_subscription';
 import { getInput } from '@actions/core';
 import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-resources';
-import { Outputs } from './utils/utils';
+import { Outputs, ReadTemplate, ReadParameters } from './utils/utils';
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 
 type SDKAuth = {
@@ -25,8 +25,13 @@ export async function main(): Promise<Outputs> {
     const templateLocation = getInput('templateLocation')
     const deploymentMode = getInput('deploymentMode') as ResourceManagementModels.DeploymentMode
     const deploymentName = getInput('deploymentName')
-    const parametersLocation = getInput('parametersLocation')
-    
+    const parameters = getInput('parameters')
+    const overrideParameters = getInput('overrideParameters')
+
+    // Parse the inputs
+    const template = ReadTemplate(templateLocation)
+    const mergedParameters = { parameters: { ...ReadParameters(parameters).parameters, ...ReadParameters(overrideParameters).parameters } }
+
     // retrive the credentials
     const creds = await msRestNodeAuth.loginWithServicePrincipalSecret(credentials.clientId, credentials.clientSecret, credentials.tenantId)
     const client = new ResourceManagementClient(creds, credentials.subscriptionId);
@@ -35,13 +40,13 @@ export async function main(): Promise<Outputs> {
     let result: Outputs = {};
     switch(scope) {
         case "resourcegroup":
-            result = await DeployResourceGroupScope(client, resourceGroupName, location, templateLocation, deploymentMode, deploymentName, parametersLocation)
+            result = await DeployResourceGroupScope(client, resourceGroupName, location, template, deploymentMode, deploymentName, mergedParameters)
             break
         case "managementgroup":
-            result = await DeployManagementGroupScope(client, "", location, templateLocation, deploymentMode, deploymentName, parametersLocation)
+            result = await DeployManagementGroupScope(client, "", location, template, deploymentMode, deploymentName, mergedParameters)
             break
         case "subscription":
-            result = await DeploySubscriptionScope(client, location, templateLocation, deploymentMode, deploymentName, parametersLocation)
+            result = await DeploySubscriptionScope(client, location, template, deploymentMode, deploymentName, mergedParameters)
             break
         default:
             throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")

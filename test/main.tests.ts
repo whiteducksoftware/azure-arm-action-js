@@ -5,7 +5,7 @@ import * as assert from 'assert';
 export async function runTests() {
     let result = await main()
     assert.equal(Object.keys(result).length, 2, `Expected output count of 2 but got ${Object.keys(result).length}`)
-    assert.equal(result["containerName"].value, "github-action", `Got invalid value for location key, expected github-action but got ${result["containerName"].value}`)
+    assert.equal(result["containerName"].value, "github-action-override", `Got invalid value for location key, expected github-action-override but got ${result["containerName"].value}`)
     assert.equal(result["location"].value, "westeurope", `Got invalid value for location key, expected westeurope but got ${result["location"].value}`)
 }
 

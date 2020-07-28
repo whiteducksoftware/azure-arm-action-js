@@ -4,12 +4,12 @@ inputs:
   scope:
     description: "Provide the scope of the deployment. alid values are: 'resourcegroup', 'managementgroup', 'subscription'"
     required: true
-  subscriptionId:
-    description: "Provide the Id of the subscription which should be used."
+  credentials:
+    description: "Paste output of `az ad sp create-for-rbac -o json` as value of secret variable: AZURE_CREDENTIALS"
     required: true
   location:
-    description: "Provide the target region, only required for management Group or Subscription deployments."
-    required: false
+    description: "Provide the target region."
+    required: true
   resourceGroupName:
     description: "Provide the name of a resource group."
     required: false
@@ -24,7 +24,10 @@ inputs:
     description: "Specifies the name of the resource group deployment to create."
     required: false
   parameters:
-    description: "Supply deployment parameter values."
+    description: "Supply the path or URL to the Azure Resource Manager parameters."
+    required: false
+  overrideParameters:
+    description: "Specify either path to the Azure Resource Manager override parameters file or pass them as 'key1=value1;key2=value2;...'."
     required: false
 branding:
   color: orange

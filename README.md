@@ -15,9 +15,9 @@ A GitHub Action to deploy ARM templates.
 
 * `scope`: **Required** Provide the scope of the deployment. Valid values are: `resourcegroup`, `managementgroup`, `subscription`
 
-* `subscriptionId` **Required** Provide the Id of the subscription which should be used.
+* `credentials` **Required** Paste output of `az ad sp create-for-rbac -o json`.
 
-* `location` Provide the target region, only required for Management Group or Subscription deployments.
+* `location` Provide the target region. 
 
 * `resourceGroupName` Provide the name of a resource group.
 
@@ -27,7 +27,10 @@ A GitHub Action to deploy ARM templates.
   
 * `deploymentName` Specifies the name of the resource group deployment to create.
 
-* `parameters` Supply deployment parameter values or local as well as remote value files.   
+* `parameters` Supply the path to the Azure Resource Manager parameters or pass them as Key-Value Pairs. 
+  (See also [examples/Advanced.md](examples/Advanced.md))
+
+* `overrideParameters` Specify the path to the Azure Resource Manager override parameters file or pass them as Key-Value Pairs.  
   (See also [examples/Advanced.md](examples/Advanced.md))
 
 ## Outputs
@@ -56,15 +59,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - uses: whiteducksoftware/azure-arm-action-js@v3
       with:
         scope: resourcegroup
-        subscriptionId: e1046c08-7072-****-****-************
+        credentials: ${{ secrets.AZURE_CREDENTIALS }}
         resourceGroupName: github-action-arm-rg
         templateLocation: ./azuredeploy.json
-        parameters: storageAccountType=Standard_LRS
+        parameters: ./parameters.json
 ```
 For more advanced workflows see [examples/Advanced.md](examples/Advanced.md).
