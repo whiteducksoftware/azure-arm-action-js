@@ -4,7 +4,7 @@
   "description": "GitHub Action task to deploy an Azure Resource Manager (ARM) template",
   "main": "main.js",
   "scripts": {
-    "test": "nocommd"
+    "test": "npx ts-node test/main.tests.ts"
   },
   "repository": {
     "type": "git",

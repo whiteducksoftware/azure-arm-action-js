@@ -29,4 +29,4 @@ jobs:
           INPUT_OVERRIDEPARAMETERS: ./test/parameters.override.json
           INPUT_DEPLOYMENTNAME: github-test
           INPUT_DEPLOYMENTMODE: Incremental
-        run: ts-node test/main.tests.ts
+        run: npm run test
