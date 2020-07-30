@@ -2,7 +2,7 @@ name: "Azure Resource Manager (ARM) Template Deployment JS"
 description: "Use this GitHub Action task deploy an Azure Resource Manager (ARM) template"
 inputs:
   scope:
-    description: "Provide the scope of the deployment. alid values are: 'resourcegroup', 'managementgroup', 'subscription'"
+    description: "Provide the scope of the deployment. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'"
     required: true
   credentials:
     description: "Paste output of `az ad sp create-for-rbac -o json` as value of secret variable: AZURE_CREDENTIALS"
@@ -31,6 +31,9 @@ inputs:
     required: false
   managementGroupId:
     description: "Specify the Id for the Management Group, only required for Management Group Deployments."
+    required: false
+  validationOnly:
+    description: "Whenether the template should only be validated or also deployed. Valid values are: 'true', 'false'"
     required: false
 branding:
   color: orange

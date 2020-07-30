@@ -1,10 +1,11 @@
-import { DeployResourceGroupScope } from './deploy/scope_resourcegroup';
-import { DeployManagementGroupScope } from './deploy/scope_managementgroup';
-import { DeploySubscriptionScope } from './deploy/scope_subscription';
-import { getInput } from '@actions/core';
+import { DeployResourceGroupScope, ValidateResourceGroupScope } from './deploy/scope_resourcegroup';
+import { DeployManagementGroupScope, ValidateManagementGroupScope } from './deploy/scope_managementgroup';
+import { DeploySubscriptionScope, ValidateSubscriptionScope } from './deploy/scope_subscription';
+import { getInput, info } from '@actions/core';
 import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-resources';
 import { Outputs, ReadTemplate, ReadParameters } from './utils/utils';
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
+import { v4 as uuidv4 } from 'uuid';
 
 type SDKAuth = {
 	clientId: string
@@ -28,6 +29,7 @@ export async function main(): Promise<Outputs> {
     const parameters = getInput('parameters')
     const overrideParameters = getInput('overrideParameters')
     const managementGroupdId = getInput('managementGroupId')
+    const validationOnly = getInput('validationOnly') == 'true';
 
     // Parse the inputs
     const template = ReadTemplate(templateLocation)
@@ -37,20 +39,49 @@ export async function main(): Promise<Outputs> {
     const creds = await msRestNodeAuth.loginWithServicePrincipalSecret(credentials.clientId, credentials.clientSecret, credentials.tenantId)
     const client = new ResourceManagementClient(creds, credentials.subscriptionId);
 
-    // Run the Deployment
-    let result: Outputs = {};
+    // build properties
+    const deploymentProperties: ResourceManagementModels.DeploymentProperties = {
+        mode: deploymentMode,
+        ...template,
+        ...mergedParameters
+    }
+
+    // generate deploymentName
+    const uuid = uuidv4()
+    const _deploymentName = `${deploymentName}-${uuid}`
+    info(`Deployment \x1b[32m${deploymentName}\x1b[0m with uuid \x1b[32m${uuid}\x1b[0m -> \x1b[32m${_deploymentName}\x1b[0m, mode: \x1b[32m${ validationOnly ? "Validation" : deploymentMode }\x1b[0m`)
+
+    // Validate the Deployment
     switch(scope) {
         case "resourcegroup":
-            result = await DeployResourceGroupScope(client, resourceGroupName, location, template, deploymentMode, deploymentName, mergedParameters)
+            await ValidateResourceGroupScope(client, resourceGroupName, _deploymentName, deploymentProperties)
             break
         case "managementgroup":
-            result = await DeployManagementGroupScope(client, managementGroupdId, location, template, deploymentMode, deploymentName, mergedParameters)
+            await ValidateManagementGroupScope(client, managementGroupdId, location, _deploymentName, deploymentProperties)
             break
         case "subscription":
-            result = await DeploySubscriptionScope(client, location, template, deploymentMode, deploymentName, mergedParameters)
+            await ValidateSubscriptionScope(client, location, _deploymentName, deploymentProperties)
             break
         default:
             throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
+    }
+
+    // Run the Deployment
+    let result: Outputs = {};
+    if (!validationOnly) {
+        switch(scope) {
+            case "resourcegroup":
+                result = await DeployResourceGroupScope(client, resourceGroupName, location, _deploymentName, deploymentProperties)
+                break
+            case "managementgroup":
+                result = await DeployManagementGroupScope(client, managementGroupdId, location, _deploymentName, deploymentProperties)
+                break
+            case "subscription":
+                result = await DeploySubscriptionScope(client, location, _deploymentName, deploymentProperties)
+                break
+            default:
+                throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
+        }
     }
 
     return result
