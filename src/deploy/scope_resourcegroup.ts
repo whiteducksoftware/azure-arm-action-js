@@ -1,5 +1,5 @@
 import { info } from '@actions/core';
-import { Outputs } from '../utils/utils';
+import { Outputs } from '../utils';
 import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-resources';
 
 export async function ValidateResourceGroupScope(client: ResourceManagementClient, resourceGroupName: string, deploymentName: string, deploymentProperties: ResourceManagementModels.DeploymentProperties): Promise<ResourceManagementModels.DeploymentsValidateResponse> {

@@ -1,7 +1,6 @@
 import { info } from '@actions/core';
-import { Outputs, Parameters, Template } from '../utils/utils';
+import { Outputs } from '../utils';
 import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-resources';
-import { v4 as uuidv4 } from 'uuid';
 
 export async function ValidateManagementGroupScope(client: ResourceManagementClient, mangedmentGroupId: string, location: string, deploymentName: string, deploymentProperties: ResourceManagementModels.DeploymentProperties): Promise<ResourceManagementModels.DeploymentsValidateResponse> {
     // build deployment

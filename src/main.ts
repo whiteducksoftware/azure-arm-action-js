@@ -3,7 +3,7 @@ import { DeployManagementGroupScope, ValidateManagementGroupScope } from './depl
 import { DeploySubscriptionScope, ValidateSubscriptionScope } from './deploy/scope_subscription';
 import { getInput, info } from '@actions/core';
 import { ResourceManagementClient, ResourceManagementModels } from '@azure/arm-resources';
-import { Outputs, ReadTemplate, ReadParameters } from './utils/utils';
+import { Outputs, ReadTemplate, ReadParameters } from './utils';
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -67,22 +67,18 @@ export async function main(): Promise<Outputs> {
     }
 
     // Run the Deployment
-    let result: Outputs = {};
     if (!validationOnly) {
         switch(scope) {
             case "resourcegroup":
-                result = await DeployResourceGroupScope(client, resourceGroupName, location, _deploymentName, deploymentProperties)
-                break
+                return DeployResourceGroupScope(client, resourceGroupName, location, _deploymentName, deploymentProperties)
             case "managementgroup":
-                result = await DeployManagementGroupScope(client, managementGroupdId, location, _deploymentName, deploymentProperties)
-                break
+                return DeployManagementGroupScope(client, managementGroupdId, location, _deploymentName, deploymentProperties)
             case "subscription":
-                result = await DeploySubscriptionScope(client, location, _deploymentName, deploymentProperties)
-                break
+                return DeploySubscriptionScope(client, location, _deploymentName, deploymentProperties)
             default:
                 throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
         }
     }
 
-    return result
+    return {}
 }
