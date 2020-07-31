@@ -38,6 +38,8 @@ A GitHub Action to deploy ARM templates.
 * `validationOnly` Specify whenether the template should only be validated or also deployed. Valid values are: 'true', 'false'
 
 ## Outputs
+* `generatedName` The generated name of the deployment which has been used.
+
 Every template output will be exported as output. For example the output is called `containerName` then it will be available with `${{ steps.STEP.outputs.containerName }}`    
 For more Information see [examples/Advanced.md](examples/Advanced.md).    
 

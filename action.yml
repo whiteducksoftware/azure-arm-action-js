@@ -35,6 +35,9 @@ inputs:
   validationOnly:
     description: "Whenether the template should only be validated or also deployed. Valid values are: 'true', 'false'"
     required: false
+ouputs:
+  generatedName:
+    description: "The generated name of the deployment which has been used."
 branding:
   color: orange
   icon: package
