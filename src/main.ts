@@ -52,6 +52,7 @@ export async function main(): Promise<Outputs> {
     info(`Deployment \x1b[32m${deploymentName}\x1b[0m with uuid \x1b[32m${uuid}\x1b[0m -> \x1b[32m${_deploymentName}\x1b[0m, mode: \x1b[32m${ validationOnly ? "Validation" : deploymentMode }\x1b[0m`)
 
     // Validate the Deployment
+    var outputs: Outputs = {}
     switch(scope) {
         case "resourcegroup":
             await ValidateResourceGroupScope(client, resourceGroupName, _deploymentName, deploymentProperties)
@@ -66,19 +67,24 @@ export async function main(): Promise<Outputs> {
             throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
     }
 
+
     // Run the Deployment
     if (!validationOnly) {
         switch(scope) {
             case "resourcegroup":
-                return DeployResourceGroupScope(client, resourceGroupName, location, _deploymentName, deploymentProperties)
+                outputs = await DeployResourceGroupScope(client, resourceGroupName, location, _deploymentName, deploymentProperties)
+                break
             case "managementgroup":
-                return DeployManagementGroupScope(client, managementGroupdId, location, _deploymentName, deploymentProperties)
+                outputs = await DeployManagementGroupScope(client, managementGroupdId, location, _deploymentName, deploymentProperties)
+                break
             case "subscription":
-                return DeploySubscriptionScope(client, location, _deploymentName, deploymentProperties)
+                outputs = await DeploySubscriptionScope(client, location, _deploymentName, deploymentProperties)
+                break
             default:
                 throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")
         }
     }
 
-    return {}
+    Object.assign(outputs, { "generatedName": { type: "String", value: _deploymentName } } as Outputs)
+    return outputs
 }
