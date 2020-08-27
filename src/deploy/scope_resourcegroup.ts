@@ -9,6 +9,12 @@ export async function DeployResourceGroupScope(azPath: string, validationOnly: b
         throw Error("ResourceGroup name must be set.")
     }
 
+    // Check if the resourceGroup exists
+    var result = await exec(`"${azPath}" group show --resource-group ${resourceGroupName}`, [], { silent: true, ignoreReturnCode: true });
+    if (result != 0) {
+        throw Error("Resource Group could not be found.")
+    }
+
     // create the parameter list
     const azDeployParameters = [
         resourceGroupName ? `--resource-group ${resourceGroupName}` : undefined,
