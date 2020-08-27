@@ -30,6 +30,10 @@ A GitHub Action to deploy ARM templates.
 * `parameters` Supply deployment parameter values or local as well as remote value files.   
   (See also [examples/Advanced.md](examples/Advanced.md))
 
+* `managementGroupId` Specify the Id for the Management Group, only required for Management Group Deployments.
+
+* `validationOnly` Whenether the template should only be validated or also deployed. Valid values are: `true`, `false`
+
 ## Outputs
 Every template output will be exported as output. For example the output is called `containerName` then it will be available with `${{ steps.STEP.outputs.containerName }}`    
 For more Information see [examples/Advanced.md](examples/Advanced.md).    

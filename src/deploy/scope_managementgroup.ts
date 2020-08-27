@@ -3,7 +3,7 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 import { ParseOutputs, Outputs } from '../utils/utils';
 import { info } from '@actions/core';
 
-export async function DeployManagementGroupScope(azPath: string, location: string,  templateLocation: string, deploymentMode: string, deploymentName: string, managementGroupdId: string, parameters: string): Promise<Outputs> {    
+export async function DeployManagementGroupScope(azPath: string, validationOnly: boolean, location: string,  templateLocation: string, deploymentMode: string, deploymentName: string, parameters: string, managementGroupId: string): Promise<Outputs> {    
     // Check if location is set
     if (!location) {
         throw Error("Location must be set.")
@@ -15,7 +15,7 @@ export async function DeployManagementGroupScope(azPath: string, location: strin
         templateLocation ?
             templateLocation.startsWith("http") ? `--template-uri ${templateLocation}`: `--template-file ${templateLocation}`
         : undefined,
-        managementGroupdId ? `--management-groupid ${managementGroupdId}` : undefined,
+        managementGroupId ? `--management-group-id ${managementGroupId}` : undefined,
         deploymentMode ? `--mode ${deploymentMode}` : undefined,
         deploymentName ? `--name ${deploymentName}` : undefined,
         parameters ? `--parameters ${parameters}` : undefined
@@ -38,6 +38,8 @@ export async function DeployManagementGroupScope(azPath: string, location: strin
     // validate the deployment
     info("Validating template...")
     await exec(`"${azPath}" deployment mg validate ${azDeployParameters} -o json`, [], { silent: true, failOnStdErr: true });
+    if (validationOnly) 
+        return {};
 
     // execute the deployment
     info("Creating deployment...")

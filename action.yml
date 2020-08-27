@@ -29,6 +29,9 @@ inputs:
   managementGroupId:
     description: "Specify the Id for the Management Group, only required for Management Group Deployments."
     required: false
+  validationOnly:
+    description: "Whenether the template should only be validated or also deployed. Valid values are: 'true', 'false'"
+    required: false
 branding:
   color: orange
   icon: package

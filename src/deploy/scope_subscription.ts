@@ -3,7 +3,7 @@ import { ExecOptions } from '@actions/exec/lib/interfaces';
 import { ParseOutputs, Outputs } from '../utils/utils';
 import { info } from '@actions/core';
 
-export async function DeploySubscriptionScope(azPath: string, location: string,  templateLocation: string, deploymentName: string, parameters: string): Promise<Outputs> {    
+export async function DeploySubscriptionScope(azPath: string, validationOnly: boolean, location: string,  templateLocation: string, deploymentName: string, parameters: string): Promise<Outputs> {    
     // Check if location is set
     if (!location) {
         throw Error("Location must be set.")
@@ -36,6 +36,8 @@ export async function DeploySubscriptionScope(azPath: string, location: string, 
     // validate the deployment
     info("Validating template...")
     await exec(`"${azPath}" deployment sub validate ${azDeployParameters} -o json`, [], { silent: true, failOnStdErr: true });
+    if (validationOnly)
+        return {};
 
     // execute the deployment
     info("Creating deployment...")
