@@ -20,6 +20,7 @@ export async function main(): Promise<Outputs> {
     const templateLocation = getInput('templateLocation')
     const deploymentMode = getInput('deploymentMode')
     const deploymentName = getInput('deploymentName')
+    const managementGroupId = getInput('managementGroupId')
     const parameters = getInput('parameters')
 
     // change the subscription context
@@ -33,10 +34,10 @@ export async function main(): Promise<Outputs> {
             result = await DeployResourceGroupScope(azPath, resourceGroupName, templateLocation, deploymentMode, deploymentName, parameters)
             break
         case "managementgroup":
-            result = await DeployManagementGroupScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters)
+            result = await DeployManagementGroupScope(azPath, location, templateLocation, deploymentMode, deploymentName, managementGroupId, parameters)
             break
         case "subscription":
-            result = await DeploySubscriptionScope(azPath, location, templateLocation, deploymentMode, deploymentName, parameters)
+            result = await DeploySubscriptionScope(azPath, location, templateLocation, deploymentName, parameters)
             break
         default:
             throw new Error("Invalid scope. Valid values are: 'resourcegroup', 'managementgroup', 'subscription'")

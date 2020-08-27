@@ -26,6 +26,9 @@ inputs:
   parameters:
     description: "Supply deployment parameter values."
     required: false
+  managementGroupId:
+    description: "Specify the Id for the Management Group, only required for Management Group Deployments."
+    required: false
 branding:
   color: orange
   icon: package
