@@ -41,7 +41,7 @@ For more Information see [examples/Advanced.md](examples/Advanced.md).
 ## Usage
 
 ```yml
-- uses: whiteducksoftware/azure-arm-action-js@v4
+- uses: whiteducksoftware/azure-arm-action-js@v4.1
   with:
     scope: resourcegroup
     subscriptionId: <YourSubscriptionId>
@@ -63,7 +63,7 @@ jobs:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - uses: whiteducksoftware/azure-arm-action-js@v4
+    - uses: whiteducksoftware/azure-arm-action-js@v4.1
       with:
         scope: resourcegroup
         subscriptionId: e1046c08-7072-****-****-************
