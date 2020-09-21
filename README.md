@@ -1,5 +1,11 @@
 # GitHub Action for Azure Resource Manager (ARM) deployment
 
+##  archived
+
+We did it 🎉🥳. Microsoft / GitHub decided to rehost our GitHub Action within the [official Azure repostory](https://github.com/Azure/arm-deploy). This means that this repository should no longer be used. 
+
+--------
+
 A GitHub Action to deploy ARM templates.
 
 ![build and publish](https://github.com/whiteducksoftware/azure-arm-action-js/workflows/build-release/badge.svg)
